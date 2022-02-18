@@ -1,0 +1,107 @@
+ext.aliRepo = [
+        snapshot: 'https://repo.rdc.aliyun.com/repository/72077-snapshot-057BdJ/',
+        release : 'https://repo.rdc.aliyun.com/repository/72077-release-FWXfLw/',
+        username: project.hasProperty("skd.repo.username") ? project['skd.repo.username'] : '',
+        password: project.hasProperty("skd.repo.password") ? project['skd.repo.password'] : ''
+]
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath "io.jmix.gradle:jmix-gradle-plugin:1.1.0"
+    }
+}
+def gitBranch() {
+    def branch = ""
+    def proc = "git rev-parse --abbrev-ref HEAD".execute()
+    proc.in.eachLine { line -> branch = line }
+    proc.err.eachLine { line -> println line }
+    proc.waitFor()
+    branch
+}
+def branchName=gitBranch();
+def isSnapshot=!branchName.equals("master")
+def repoUrl=isSnapshot?aliRepo.snapshot:aliRepo.release
+
+group = 'cn.jmix'
+version = '0.0.1'+(isSnapshot?"-SNAPSHOT":"");
+
+
+subprojects {
+
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'io.jmix'
+
+    repositories {
+        mavenLocal()
+        maven {
+            url 'https://global.repo.jmix.io/repository/public'
+        }
+        maven {
+            url 'https://maven.aliyun.com/nexus/content/groups/public/'
+        }
+        maven {
+            url aliRepo.release
+            credentials {
+                username(aliRepo.username)
+                password(aliRepo.password)
+            }
+        }
+        maven {
+            url aliRepo.snapshot
+            credentials {
+                username(aliRepo.username)
+                password(aliRepo.password)
+            }
+        }
+    }
+
+    jmix {
+        bomVersion = '1.1.0'
+        projectId = 'tencentfs'
+    }
+
+    group = this.group
+    version = this.version
+
+    def props = new Properties()
+    buildFile.withInputStream { props.load(it) }
+    def subArchivesBaseName = props.getProperty('archivesBaseName')
+    def archName = subArchivesBaseName.substring(1, subArchivesBaseName.length() - 1)
+
+    java {
+        withSourcesJar()
+    }
+
+    artifacts {
+        archives sourcesJar
+    }
+
+    publishing {
+        repositories {
+            maven {
+                url = repoUrl
+                credentials {
+                    username aliRepo.username
+                    password aliRepo.password
+                }
+                allowInsecureProtocol = true
+            }
+        }
+        publications {
+            javaMaven(MavenPublication) {
+                artifactId = archName
+                from components.java
+            }
+        }
+    }
+
+
+    // remove after https://youtrack.jetbrains.com/issue/IDEA-227215 is fixed
+    tasks.withType(GenerateModuleMetadata) {
+        enabled = false
+    }
+}

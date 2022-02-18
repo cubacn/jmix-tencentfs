@@ -1,0 +1,21 @@
+apply plugin: 'groovy'
+apply plugin: 'io.jmix'
+
+archivesBaseName = 'jmixcn-tencentfs'
+
+dependencies {
+    api 'io.jmix.core:jmix-core'
+    api 'com.qcloud:cos_api:5.6.54'
+
+    testImplementation 'org.springframework.boot:spring-boot-test'
+    testImplementation 'org.springframework:spring-test'
+    testImplementation "org.spockframework:spock-core"
+    testImplementation "org.spockframework:spock-spring"
+    testRuntimeOnly 'org.slf4j:slf4j-simple'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
