@@ -1,3 +1,4 @@
+import cn.jmix.tencentfs.TencentFileStorage
 import cn.jmix.tencentfs.TencentFileStorageConfiguration
 import io.jmix.core.CoreConfiguration
 import io.jmix.core.FileRef
@@ -22,45 +23,26 @@ class TencentFileStorageTest extends Specification {
     @Autowired
     private FileStorage fileStorage
 
-    def "save stream"(){
+    def "save open remove"(){
         def fileName=UuidProvider.createUuid().toString()+".txt";
-        def fileStream=this.getClass().getClassLoader().getResourceAsStream("files/simple.txt");
-        def fileRef=fileStorage.saveStream(fileName,fileStream);
+        String string = "Text for testing.";
+        InputStream inputStream = new ByteArrayInputStream(string.getBytes());
+        def fileRef=fileStorage.saveStream(fileName,inputStream);
+        def fileExists= fileStorage.fileExists(fileRef)
         def openedStream=fileStorage.openStream(fileRef);
+        def fileOpened =openedStream!=null
+        fileStorage.removeFile(fileRef)
         expect:
-            openedStream!=null
+        verifyAll {
+            fileExists
+            fileOpened
+        }
     }
 
-    def "fileExists"() {
-        def storageName = fileStorage.getStorageName()
-        def fileKey = "2021/11/09/e24e6c35-767d-741b-0edb-ae54a34881b6.txt"
-        def fileName="e24e6c35-767d-741b-0edb-ae54a34881b6.txt"
-
-        def fileref = new FileRef(storageName, fileKey, fileName);
-        def exists = fileStorage.fileExists(fileref)
-
-        expect:  exists
-
-    }
-
-
-    def "removeFile"(){
-        def storageName = fileStorage.getStorageName()
-        def fileKey = "2021/11/09/e24e6c35-767d-741b-0edb-ae54a34881b6.txt"
-        def fileName="e24e6c35-767d-741b-0edb-ae54a34881b6.txt"
-
-        def fileref = new FileRef(storageName, fileKey, fileName);
-        fileStorage.removeFile(fileref)
-
-
-        def exists = fileStorage.fileExists(fileref)
-
-        expect:  !exists
-    }
-
-
-    def "Tencent storage initialized"() {
+    def "tencent storage initialized"() {
         expect:
         fileStorage.getStorageName() == TencentFileStorage.DEFAULT_STORAGE_NAME
     }
+
+
 }
