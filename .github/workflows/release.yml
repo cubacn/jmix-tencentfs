@@ -11,7 +11,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Publish package
-        run: gradle -Pversion=${{ github.event.release.tag_name }} build publish
+        run: gradle -Pversion=${{ github.event.release.tag_name }} -Pargs='jmix.tencentfs.secretId=${{ secrets.JMIX_TENCENTFS_SECRETID }} ,--jmix.tencentfs.secretKey=${{ secrets.JMIX_TENCENTFS_SECRETKEY }}' build publish
         env:
           GITHUB_REPOSITORY: ${{ github.repository }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
