@@ -1,3 +1,5 @@
+import org.springframework.util.StringUtils
+
 apply plugin: 'groovy'
 apply plugin: 'io.jmix'
 
@@ -17,5 +19,11 @@ dependencies {
 }
 
 test {
+    if (project.hasProperty('args')) {
+        project.args.split(',').each {
+            def (key, value) = it.replaceFirst('--', "").split('=')
+            systemProperty (StringUtils.trimAllWhitespace((String)key), StringUtils.trimAllWhitespace((String)value ))
+        }
+    }
     useJUnitPlatform()
 }
