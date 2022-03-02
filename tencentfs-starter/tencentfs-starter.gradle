@@ -1,4 +1,4 @@
-archivesBaseName = 'tencentfs-starter'
+archivesBaseName = 'jmixcn-tencentfs-starter'
 
 jmix {
     entitiesEnhancing {
