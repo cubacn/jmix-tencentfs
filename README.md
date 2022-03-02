@@ -8,12 +8,12 @@
 
 | Jmix 版本     | 扩展组件版本     | Implementation                             |
 |--------------|----------------|--------------------------------------------|
-| 1.1.*        | 1.0.0          | cn.jmix:tencentfs-starter:1.0.0                |
+| 1.1.*        | 1.0.0          | cn.jmix:jmixcn-tencentfs-starter:1.0.0                |
 
 `build.gradle` 文件中添加依赖:
 
 ```gradle
-implementation 'cn.jmix:tencentfs-starter:1.0.0'
+implementation 'cn.jmix:jmixcn-tencentfs-starter:1.0.0'
 ```
 
 # 配置
