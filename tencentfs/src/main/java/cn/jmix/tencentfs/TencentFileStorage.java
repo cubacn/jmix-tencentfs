@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class TencentFileStorage implements FileStorage {
 
     private static final Logger log = LoggerFactory.getLogger(TencentFileStorage.class);
-    public static final String DEFAULT_STORAGE_NAME = "bos";
+    public static final String DEFAULT_STORAGE_NAME = "cos";
 
     protected String storageName;
 
